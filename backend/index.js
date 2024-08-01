@@ -29,10 +29,13 @@ app.get("/api/container/fetchById", ContainerController.fetchById);
 app.get("/api/container/command", ContainerController.command);
 app.get("/api/container/logs", ContainerController.logs);
 app.get("/api/container/stats", ContainerController.stats);
+app.delete("/api/container/delete", ContainerController.delete);
 
 app.get("/api/image/fetch", ImageController.fetch);
 app.get("/api/image/command", ImageController.command);
 app.get("/api/cleanup/command", CleanUpController.command);
+app.post("/api/image/upload", ImageController.upload);
+app.get("/api/system-images", ImageController.listImages);
 
 app.post("/api/groups", GroupController.create);
 app.get("/api/groups", GroupController.fetch);

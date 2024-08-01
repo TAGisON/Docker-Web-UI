@@ -62,3 +62,14 @@ exports.stats = async (req, res) => {
     .map((stat) => JSON.parse(stat));
   res.json(statsArray);
 };
+
+exports.delete = async (req, res, next) => {
+  const containerID = req.query.container;
+  try {
+    const deleteCmd = await safeTerminal.generic('rm', containerID);
+    res.json({ message: `Container ${containerID} deleted successfully`, details: deleteCmd });
+  } catch (error) {
+    next(error);
+  }
+};
+
