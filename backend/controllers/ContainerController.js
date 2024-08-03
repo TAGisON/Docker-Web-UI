@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const { safeTerminal } = require("../utilities/terminal");
 const { lightContainerDetail } = require("../utilities/lightContainerDetail");
 
@@ -73,3 +75,30 @@ exports.delete = async (req, res, next) => {
   }
 };
 
+exports.exportContainer = async (req, res, next) => {
+  const containerId = req.query.containerId;
+  const containerName = req.query.containerName;
+
+  if (!containerId || !containerName) {
+    return res.status(400).json({ error: 'Container ID and name are required' });
+  }
+
+  try {
+    const savePath = `/mnt/container_images/${containerName}.tar`;
+    const exportCommand = `docker export ${containerId} -o ${savePath}`;
+    await safeTerminal.generic(exportCommand);
+
+    res.download(savePath, `${containerName}.tar`, (err) => {
+      if (err) {
+        next(err);
+      } else {
+        // Optionally delete the file after download
+        fs.unlink(savePath, (err) => {
+          if (err) console.error('Failed to delete the file:', err);
+        });
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
